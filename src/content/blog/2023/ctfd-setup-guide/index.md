@@ -2,6 +2,7 @@
 title: 'CTFd Setup Guide'
 description: 'A guide to setting up a CTFd instance on DigitalOcean'
 date: 'Mar 01 2023'
+slug: ctfd-setup-guide
 tags: ['blog', '2023']
 authors: ['flocto']
 image: './hero.png'

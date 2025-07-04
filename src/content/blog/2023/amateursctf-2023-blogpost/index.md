@@ -2,6 +2,7 @@
 title: "amateursCTF 2023 Blogpost"
 description: 'Some words about my experience helping with amateursCTF 2023'
 date: 'Jul 17 2023'
+slug: amateursctf-2023-blogpost
 tags: ['blog', 'amateursctf', '2023']
 authors: ['flocto']
 image: './hero.png'

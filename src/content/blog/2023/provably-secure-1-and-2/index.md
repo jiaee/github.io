@@ -2,6 +2,7 @@
 title: "Provably Secure 1 and 2"
 description: "Spending way too long making an audioless 5 minute video..."
 date: "Feb 17 2023"
+slug: provably-secure-1-and-2
 tags: ['writeup', '2023', 'crypto']
 authors: ['flocto']
 image: './hero.png'

@@ -2,6 +2,7 @@
 title: "UTCTF 2023 Megathread"
 description: Megathread for UTCTF 2023, contains mini writeups for most challenges
 date: "Mar 13 2023"
+slug: utctf-2023-megathread
 tags: ['writeup', '2023', 'misc', 'web', 'crypto', 'rev', 'forens', 'utctf']
 authors: ['flocto']
 image: './hero.png'
