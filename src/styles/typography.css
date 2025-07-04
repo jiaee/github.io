@@ -37,20 +37,20 @@
     :where(h1, h2, h3, h4, h5, h6):not(
         :where([class~='not-prose'], [class~='not-prose'] *)
       ) {
-      @apply text-foreground scroll-mt-32 font-medium xl:scroll-mt-20;
+      @apply scroll-mt-32 font-medium xl:scroll-mt-20;
     }
 
     /* Don't use an <h1> in your posts, one is already generated in blog/[...id].astro */
     :where(h1):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-      @apply mt-8 mb-6 text-4xl;
+      @apply text-accent mt-8 mb-6 text-4xl;
     }
 
     :where(h2):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-      @apply mt-8 mb-4 text-2xl;
+      @apply text-accent mt-8 mb-4 text-2xl;
     }
 
     :where(h3):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-      @apply mt-8 mb-4 text-xl;
+      @apply text-accent mt-8 mb-4 text-xl;
     }
 
     :where(h4):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
@@ -62,7 +62,7 @@
     }
 
     :where(a):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-      @apply text-foreground decoration-muted-foreground hover:decoration-foreground font-medium break-words underline underline-offset-[3px] transition-colors;
+      @apply text-accent decoration-muted-foreground hover:decoration-foreground hover:text-accent-foreground font-medium break-words underline underline-offset-[3px] transition-colors;
     }
 
     :where(strong):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
