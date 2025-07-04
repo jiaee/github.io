@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 @theme inline {
   --font-sans:
@@ -71,7 +71,7 @@
   --ring: hsl(0 0% 3.9%);
 }
 
-.dark {
+[data-theme='dark'] {
   --background: hsl(0 0% 11.1%);
   --header-background: hsl(0 0% 2.2%);
   --foreground: hsl(0 0% 95%);
@@ -98,21 +98,5 @@
   ::backdrop,
   ::file-selector-button {
     @apply border-border outline-ring/50 tracking-tight;
-  }
-
-  html {
-    @apply bg-background text-foreground scheme-light;
-
-    &.dark {
-      @apply scheme-dark;
-    }
-
-    ::-webkit-scrollbar-corner {
-      @apply bg-transparent;
-    }
-  }
-
-  .disable-transitions * {
-    @apply transition-none!;
   }
 }
