@@ -74,7 +74,11 @@ const parentId = isCurrentSubpost ? getParentId(currentPostId) : currentPostId
                 ) : (
                   <div
                     class={cn(
+                      'rounded-md border p-2',
+                      section.subpostId === currentPostId ? 'bg-muted/50' : '',
+                    )}
                   >
+                    <ul class="flex list-none flex-col gap-y-2">
                       <li
                         class={cn(
                           'text-xs font-medium',
