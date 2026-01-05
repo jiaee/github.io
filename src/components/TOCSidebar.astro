@@ -74,11 +74,7 @@ const parentId = isCurrentSubpost ? getParentId(currentPostId) : currentPostId
                 ) : (
                   <div
                     class={cn(
-                      'border p-2',
-                      section.subpostId === currentPostId ? 'bg-muted/50' : '',
-                    )}
                   >
-                    <ul class="flex list-none flex-col gap-y-2">
                       <li
                         class={cn(
                           'text-xs font-medium',
@@ -143,7 +139,7 @@ const parentId = isCurrentSubpost ? getParentId(currentPostId) : currentPostId
 }
 
 <script>
-  const HEADER_OFFSET = 80
+  const HEADER_OFFSET = 150
 
   class TOCState {
     links: NodeListOf<Element> = document.querySelectorAll(
