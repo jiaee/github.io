@@ -8,21 +8,22 @@ authors: ["flocto"]
 image: "./hero.png"
 order: 2
 ---
+import Callout from '@/components/Callout.astro'
 
 After finding the suspicious artifact, we move on to Task 2. Unfortuately I do not feel like this task was well designed, but I'll leave my rant to the end.
 
 ## Task 2 - The hunt continues - (Network Forensics)
-> With your help, the team concludes that there was clearly a sophisticated piece of malware installed on that endpoint that was > generating some network traffic. Fortunately, DAFIN-SOC also has an IDS which retained the recent network traffic in this segment.
-> 
-> DAFIN-SOC has provided a PCAP to analyze. Thoroughly evaluate the PCAP to identify potential malicious activity.
-> 
-> Downloads:
-> 
-> - PCAP to analyze (traffic.pcap)
->
-> Prompt:
->
-> - Submit all the IP addresses that are assigned to the malicious device, one per line
+<Callout title="Description" showVariant={false}>
+With your help, the team concludes that there was clearly a sophisticated piece of malware installed on that endpoint that was generating some network traffic. Fortunately, DAFIN-SOC also has an IDS which retained the recent network traffic in this segment.
+
+DAFIN-SOC has provided a PCAP to analyze. Thoroughly evaluate the PCAP to identify potential malicious activity.
+
+Downloads:
+- PCAP to analyze (traffic.pcap)
+
+Prompt:
+- Submit all the IP addresses that are assigned to the malicious device, one per line
+</Callout>
 
 We're given quite a large PCAP file to analyze. There are 2344 packets total, with quite a bit of protocols.
 
@@ -190,7 +191,7 @@ After filtering for only packets related to `192.168.[1,2,3].254`, one thing I n
 The response from the third router, `192.168.3.254`, is suspicious, as it returns `203.0.113.108` as the query response, unlike the other two routers which return legitimate Ubuntu archive IPs. This IP address is in the TEST-NET-3 range, which is reserved for documentation and examples, meaning it is highly likely that this third router is the malicious device we are looking for.
 
 Going back to the router configs, we can see that router 3 has these three configuration blocks, one for loopback, one for LAN, and one for `to_openwrt2`.
-```sh
+```sh ins={4,10,17} title="router3_backup.config (relevant sections)"
 config interface 'loopback'
 	option device 'lo'
 	option proto 'static'
@@ -217,8 +218,8 @@ Together, we get the following IP addresses assigned to this device:
 
 Which we can submit as our final answer.
 
-## rant
+{/* ## rant
 
 I'm just leaving this here as a note because I didn't like the way this challenge was setup. I get the intent, especially with the shared DNS requests, but the description to "Submit all the IP addresses that are assigned to the malicious device, one per line" is very vague and open to interpretation. Additionally, if you submit a wrong answer, there's no feedback at all on how you might have misinterpreted the prompt, which makes it very frustrating to try and figure out what the challenge creator intended.
 
-Also, if you miss the router configs, you're essentially left with trying to take IPs from the PCAP itself and just hoping you get the right "malicious" ones. There's a lot of other traffic that is potentially suspicious, but since it doesn't come from the correct router specifically, it isn't included. In my opinion, trimming some of the noise from the PCAP or having a slightly more descriptive prompt would have made this a lot better.
+Also, if you miss the router configs, you're essentially left with trying to take IPs from the PCAP itself and just hoping you get the right "malicious" ones. There's a lot of other traffic that is potentially suspicious, but since it doesn't come from the correct router specifically, it isn't included. In my opinion, trimming some of the noise from the PCAP or having a slightly more descriptive prompt would have made this a lot better. */}

