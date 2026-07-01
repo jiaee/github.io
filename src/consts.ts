@@ -1,7 +1,7 @@
 import type { IconMap, SocialLink, Site } from '@/types'
 
 export const SITE: Site = {
-  title: "flocto's blog",
+  title: "Jiaee's page",
   description:
     'hi this is my personal website / blog. i write about computers and other stuff.',
   href: 'https://flocto.github.io/',
