@@ -1,4 +1,4 @@
-![Showcase Card](/public/static/twitter-card.png)
+![Showcase Card](/public/static/backdrop)
 
 <div align="center">
 
